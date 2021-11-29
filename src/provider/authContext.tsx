@@ -7,8 +7,8 @@ import {
 
 //
 const poolData = {
-  UserPoolId: "us-east-1_KS2lF8b8a", // Your user pool id here
-  ClientId: "7na44b7gd5q0q5fg65k37bm6hc", // Your client id here
+  UserPoolId: "us-east-2_dwZF1L6Lp", // Your user pool id here
+  ClientId: "3jgiijmd0m41isijqv9nm59498", // Your client id here
 };
 const userPool: any = new CognitoUserPool(poolData);
 
@@ -79,8 +79,9 @@ export const AuthProvider = ({ children }: any) => {
     return userInfo.authenticateUser(authenticationDetails, {
       onSuccess: (result) => {
         const tk = result.getIdToken().getJwtToken();
+        console.log(tk);
         setToken(tk);
-
+        setUser(userPool.getCurrentUser());
         return tk;
       },
 

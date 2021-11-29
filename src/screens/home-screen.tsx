@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearcgIcon } from "../assets/searchIcon.svg";
 import { Loader } from "../components/loader";
 import { AuthContext } from "../provider/authContext";
+import { Attendance } from "../components";
 
 export const HomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -65,9 +66,11 @@ const Header = () => {
   return (
     <div className="flex h-6-vh align-center w-80-vw justify-between mt-10">
       <Text fontSize="32">{`user : ${user.username}`}</Text>
+
       <Button className="pv-14 ph-30" onClick={logout}>
         <Text fontSize="24">Log out</Text>
       </Button>
+      <Attendance />
     </div>
   );
 };

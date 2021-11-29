@@ -43,6 +43,7 @@ export const FileInput = ({
       inputEl.current.style.backgroundImage = `url('${URL.createObjectURL(
         selectedFile
       )}')`;
+      console.log(selectedFile)
     }
   }, [selectedFile]);
 
