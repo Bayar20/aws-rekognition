@@ -8,12 +8,9 @@ import { AuthContext } from "../provider/authContext";
 import { Attendance } from "../components";
 
 export const HomeScreen = () => {
-  const { user } = useContext(AuthContext);
+  const { user }: any = useContext(AuthContext);
   const navigation = useNavigate();
 
-  const onPress = () => {
-    navigation("/signIn");
-  };
   return user ? (
     <ScreenContainer justifyContent="justify-between" className="flex-col">
       <Header />
@@ -22,7 +19,10 @@ export const HomeScreen = () => {
     </ScreenContainer>
   ) : (
     <ScreenContainer>
-      <Button className="pv-14 ph-30 mt-10 h-6-vh" onClick={onPress}>
+      <Button
+        className="pv-14 ph-30 mt-10 h-6-vh"
+        onClick={() => navigation("/signIn")}
+      >
         <Text fontSize="24">Sign in</Text>
       </Button>
     </ScreenContainer>
@@ -33,19 +33,14 @@ const Content = () => {
   const [selectedFile, setSelectedFile] = useState(undefined);
   const [searching, setSearching] = useState(false);
 
+  console.log(selectedFile)
+
   return (
     <div className="w-60-vw flex justify-between align-center">
-      <div className="relative flex-col align-center">
-        <FileInput
-          onFileSelect={(file: any) => setSelectedFile(file)}
-          label="Click to upload"
-        />
-        {selectedFile && (
-          <Button className="absolute pv-20 ph-20 mt-10 bottom-1">
-            <Text fontSize="16">Upload to AWS</Text>
-          </Button>
-        )}
-      </div>
+      <FileInput
+        onFileSelect={(file: any) => setSelectedFile(file)}
+        label="Click to upload"
+      />
 
       {searching ? (
         <Loader />
@@ -62,11 +57,11 @@ const Content = () => {
 };
 
 const Header = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout }: any = useContext(AuthContext);
+
   return (
     <div className="flex h-6-vh align-center w-80-vw justify-between mt-10">
       <Text fontSize="32">{`user : ${user.username}`}</Text>
-
       <Button className="pv-14 ph-30" onClick={logout}>
         <Text fontSize="24">Log out</Text>
       </Button>
