@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearcgIcon } from "../assets/searchIcon.svg";
 import { Loader } from "../components/loader";
 import { AuthContext } from "../provider/authContext";
-import { Attendance } from "../components";
+import { getUploadUrl, uploadFile } from "../api";
 
 export const HomeScreen = () => {
   const { user }: any = useContext(AuthContext);
@@ -33,14 +33,24 @@ const Content = () => {
   const [selectedFile, setSelectedFile] = useState(undefined);
   const [searching, setSearching] = useState(false);
 
-  console.log(selectedFile)
+  const search = async (file: any) => {
+    setSelectedFile(file);
+    const url = await getUploadUrl("provideUrl", {
+      name: file.name,
+      type: file.type,
+    });
+    console.log(url)
+    try {
+      await uploadFile(url, file);
+      window.alert("File successfully uploaded")
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <div className="w-60-vw flex justify-between align-center">
-      <FileInput
-        onFileSelect={(file: any) => setSelectedFile(file)}
-        label="Click to upload"
-      />
+      <FileInput onFileSelect={search} label="Click to upload" />
 
       {searching ? (
         <Loader />
@@ -65,7 +75,6 @@ const Header = () => {
       <Button className="pv-14 ph-30" onClick={logout}>
         <Text fontSize="24">Log out</Text>
       </Button>
-      <Attendance />
     </div>
   );
 };
