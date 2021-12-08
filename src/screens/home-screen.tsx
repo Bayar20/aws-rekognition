@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearcgIcon } from "../assets/searchIcon.svg";
 import { Loader } from "../components/loader";
 import { AuthContext } from "../provider/authContext";
-import { getUploadUrl, uploadFile } from "../api";
+import { getUploadUrl, uploadFile, getMatchingFace } from "../api";
 
 export const HomeScreen = () => {
   const { user }: any = useContext(AuthContext);
@@ -32,14 +32,15 @@ export const HomeScreen = () => {
 const Content = () => {
   const [selectedFile, setSelectedFile] = useState(undefined);
   const [searching, setSearching] = useState(false);
+  const [imageResult, setImageResult] = useState("")
 
-  const search = async (file: any) => {
+  const upload = async (file: any) => {
     setSelectedFile(file);
     const url = await getUploadUrl("provideUrl", {
-      name: file.name,
+      name: `uploads/${file.name}`,
       type: file.type,
     });
-    console.log(url)
+    console.log(selectedFile)
     try {
       await uploadFile(url, file);
       window.alert("File successfully uploaded")
@@ -48,20 +49,33 @@ const Content = () => {
     }
   };
 
+  const search = async (file: any) => {
+    setSearching(true)
+    
+    const fileName = await getMatchingFace("findFace", {
+        name: file.name
+    })
+
+    setImageResult(`https://bayaar-bucket.s3.us-east-2.amazonaws.com/faces/${fileName}`)
+    setSearching(false)
+  }
+
   return (
     <div className="w-60-vw flex justify-between align-center">
-      <FileInput onFileSelect={search} label="Click to upload" />
+      <FileInput onFileSelect={upload} label="Click to upload" />
 
       {searching ? (
         <Loader />
       ) : (
-        <div className="pointer" onClick={() => setSearching(true)}>
+        <div className="pointer" onClick={() => search(selectedFile)}>
           <SearcgIcon className="w-10-vw h-10-vw" />
           <Text fontSize="24">Search from AWS</Text>
         </div>
       )}
 
-      <div className="image w-20-vw h-20-vw" />
+      <div className="image w-20-vw h-20-vw" >
+        <img className={imageResult && "w-20-vw h-20-vw" } style={{objectFit: 'contain'}} src={imageResult} alt={imageResult} />
+      </div>
     </div>
   );
 };

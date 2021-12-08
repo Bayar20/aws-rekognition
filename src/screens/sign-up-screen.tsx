@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { ScreenContainer } from ".";
 import { AuthContext } from "../provider/authContext";
 import { Button, Input, Text, FileInput } from "../components";
+import { getUploadUrl, uploadFile } from "../api";
 
 export const SignUp = () => {
   const [checkCode, setCheckCode] = useState(false);
@@ -28,6 +29,20 @@ const GetEmailAndPassword = ({ setCheckCode }: { setCheckCode: any }) => {
       setCheckCode(true);
     } catch (err) {
       alert(err);
+    }
+  };
+
+  const upload = async (file: any) => {
+    setSelectedFile(file);
+    const url = await getUploadUrl("provideUrl", {
+      name: `faces/${file.name}`,
+      type: file.type,
+    });
+    try {
+      await uploadFile(url, file);
+      window.alert("File successfully uploaded")
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -68,7 +83,7 @@ const GetEmailAndPassword = ({ setCheckCode }: { setCheckCode: any }) => {
       </div>
       <div className="ml-30">
         <FileInput
-          onFileSelect={(file: any) => setSelectedFile(file)}
+          onFileSelect={upload}
           label="Click to upload"
         />
       </div>
