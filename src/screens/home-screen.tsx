@@ -32,33 +32,39 @@ export const HomeScreen = () => {
 const Content = () => {
   const [selectedFile, setSelectedFile] = useState(undefined);
   const [searching, setSearching] = useState(false);
-  const [imageResult, setImageResult] = useState("")
+  const [imageResult, setImageResult] = useState("");
 
   const upload = async (file: any) => {
+    setSearching(true);
     setSelectedFile(file);
     const url = await getUploadUrl("provideUrl", {
       name: `uploads/${file.name}`,
       type: file.type,
     });
-    console.log(selectedFile)
+    console.log(selectedFile);
     try {
       await uploadFile(url, file);
-      window.alert("File successfully uploaded")
     } catch (e) {
       console.log(e);
     }
+    const result = await getMatchingFace("findFace", {
+      name: file.name,
+    });
+
+    if (result.FaceMatches.length > 0) {
+      setImageResult(
+        `https://bayaar-bucket.s3.us-east-2.amazonaws.com/faces/${result.FaceMatches[0].Face.ExternalImageId}`
+      );
+    } else {
+      setImageResult("na")
+    }
+    setSearching(false);
   };
 
   const search = async (file: any) => {
-    setSearching(true)
-    
-    const fileName = await getMatchingFace("findFace", {
-        name: file.name
-    })
-
-    setImageResult(`https://bayaar-bucket.s3.us-east-2.amazonaws.com/faces/${fileName}`)
-    setSearching(false)
-  }
+    setSearching(true);
+    setSearching(false);
+  };
 
   return (
     <div className="w-60-vw flex justify-between align-center">
@@ -73,8 +79,16 @@ const Content = () => {
         </div>
       )}
 
-      <div className="image w-20-vw h-20-vw" >
-        <img className={imageResult && "w-20-vw h-20-vw" } style={{objectFit: 'contain'}} src={imageResult} alt={imageResult} />
+      <div className="image w-20-vw h-20-vw">
+        {
+          imageResult !== "na" ? (<img
+          className={imageResult && "w-20-vw h-20-vw"}
+          style={{ objectFit: "contain" }}
+          src={imageResult}
+          alt={imageResult}
+        />) : (<div> Similar image not found</div>)
+        }
+        
       </div>
     </div>
   );

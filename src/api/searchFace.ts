@@ -12,7 +12,8 @@ export const getMatchingFace = async (endpoint: string, data: any) => {
     },
   };
 
-  const url = await api.get(endpoint, config);
-  return url.data;
+    const url = await api.get(endpoint, config);
+    return url.data;
+
 };
 
